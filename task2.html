@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Old School Calculator</title>
+        <style>
+            @font-face {
+                font-family: "Digital-7";
+                src: url("https://fonts.cdnfonts.com/s/7205/Digital-7.woff")
+                    format("woff");
+            }
+
+            body {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                margin: 0;
+                font-family: Arial, sans-serif;
+                background-color: #000;
+                color: #0f0;
+            }
+
+            .calculator {
+                background-color: #333;
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                width: 300px;
+            }
+
+            .display {
+                width: 92%;
+                height: 60px;
+                background-color: #000;
+                color: #0f0;
+                text-align: right;
+                padding: 10px;
+                font-size: 2em;
+                border-radius: 5px;
+                margin-bottom: 10px;
+                font-family: "Digital-7", sans-serif;
+                letter-spacing: 0.1em;
+                border: 2px solid #0f0;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+            }
+
+            .buttons {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 10px;
+            }
+
+            .button {
+                background-color: #444;
+                border: none;
+                padding: 20px;
+                font-size: 1.5em;
+                border-radius: 5px;
+                cursor: pointer;
+                transition:
+                    background-color 0.3s,
+                    box-shadow 0.3s;
+                color: #0f0;
+                border: 1px solid #0f0;
+            }
+
+            .button:active {
+                background-color: #555;
+                box-shadow: 0 0 5px #0f0;
+            }
+
+            .button.operator {
+                background-color: #555;
+            }
+
+            .button.zero {
+                grid-column: span 2;
+            }
+
+            .button-container {
+                position: relative;
+            }
+
+            .name {
+                position: absolute;
+                top: 50%;
+                left: 115%;
+                transform: translateY(-60%);
+                font-size: 1em;
+                color: grey;
+                white-space: nowrap;
+                font-family:
+                    system-ui,
+                    -apple-system,
+                    BlinkMacSystemFont,
+                    "Segoe UI",
+                    Roboto,
+                    Oxygen,
+                    Ubuntu,
+                    Cantarell,
+                    "Open Sans",
+                    "Helvetica Neue",
+                    sans-serif;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="calculator">
+            <div class="display" id="display">0</div>
+            <div class="buttons">
+                <button class="button" onclick="appendNumber('7')">7</button>
+                <button class="button" onclick="appendNumber('8')">8</button>
+                <button class="button" onclick="appendNumber('9')">9</button>
+                <button class="button operator" onclick="chooseOperator('/')">
+                    ÷
+                </button>
+                <button class="button" onclick="appendNumber('4')">4</button>
+                <button class="button" onclick="appendNumber('5')">5</button>
+                <button class="button" onclick="appendNumber('6')">6</button>
+                <button class="button operator" onclick="chooseOperator('*')">
+                    ×
+                </button>
+                <button class="button" onclick="appendNumber('1')">1</button>
+                <button class="button" onclick="appendNumber('2')">2</button>
+                <button class="button" onclick="appendNumber('3')">3</button>
+                <button class="button operator" onclick="chooseOperator('-')">
+                    −
+                </button>
+                <button class="button zero" onclick="appendNumber('0')">
+                    0
+                </button>
+                <button class="button" onclick="appendNumber('.')">.</button>
+                <button class="button operator" onclick="chooseOperator('+')">
+                    +
+                </button>
+                <button class="button operator" onclick="calculate()">=</button>
+                <div class="button-container">
+                    <button class="button" onclick="clearDisplay()">C</button>
+                    <div class="name">made for <b>nezuware</b></div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            let display = document.getElementById("display");
+            let currentOperand = "";
+            let previousOperand = "";
+            let operator = "";
+
+            function appendNumber(number) {
+                if (number === "." && currentOperand.includes(".")) return;
+                currentOperand = currentOperand.toString() + number.toString();
+                updateDisplay();
+            }
+
+            function chooseOperator(selectedOperator) {
+                if (currentOperand === "") return;
+                if (previousOperand !== "") {
+                    calculate();
+                }
+                operator = selectedOperator;
+                previousOperand = currentOperand;
+                currentOperand = "";
+            }
+
+            function calculate() {
+                let computation;
+                const prev = parseFloat(previousOperand);
+                const current = parseFloat(currentOperand);
+                if (isNaN(prev) || isNaN(current)) return;
+                switch (operator) {
+                    case "+":
+                        computation = prev + current;
+                        break;
+                    case "-":
+                        computation = prev - current;
+                        break;
+                    case "*":
+                        computation = prev * current;
+                        break;
+                    case "/":
+                        computation = prev / current;
+                        break;
+                    default:
+                        return;
+                }
+                currentOperand = computation;
+                operator = "";
+                previousOperand = "";
+                updateDisplay();
+            }
+
+            function clearDisplay() {
+                currentOperand = "";
+                previousOperand = "";
+                operator = "";
+                updateDisplay();
+            }
+
+            function updateDisplay() {
+                display.innerText = currentOperand;
+            }
+        </script>
+    </body>
+</html>

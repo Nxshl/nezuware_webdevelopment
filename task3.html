@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>To-Do List Application</title>
+        <style>
+            @font-face {
+                font-family: "Digital-7";
+                src: url("https://fonts.cdnfonts.com/s/7205/Digital-7.woff")
+                    format("woff");
+            }
+
+            body {
+                font-family: Arial, sans-serif;
+                background-color: black;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                margin: 0;
+            }
+
+            .container {
+                background: white;
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+                width: 400px;
+                position: relative;
+            }
+
+            h1 {
+                text-align: center;
+                color: #333;
+                margin-bottom: 20px;
+            }
+
+            #task-form {
+                display: flex;
+                flex-direction: column;
+                margin-bottom: 20px;
+            }
+
+            #task-input,
+            #priority-select,
+            #due-date {
+                padding: 10px;
+                font-size: 16px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                margin-bottom: 10px;
+            }
+
+            button {
+                padding: 10px 15px;
+                font-size: 16px;
+                color: white;
+                background-color: #007bff;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                margin-top: 10px;
+                transition: background-color 0.3s ease;
+            }
+
+            button:hover {
+                background-color: #0056b3;
+            }
+
+            #task-list {
+                list-style-type: none;
+                padding: 0;
+            }
+
+            .task-item {
+                background: #f9f9f9;
+                border: 1px solid #ddd;
+                padding: 10px;
+                margin-bottom: 10px;
+                border-radius: 5px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                animation: fadeIn 1.5ms;
+            }
+
+            @keyframes smoothBlink {
+                0%,
+                100% {
+                    opacity: 1;
+                }
+                50% {
+                    opacity: 0.5;
+                }
+            }
+
+            .task-item.completed {
+                text-decoration: line-through;
+                color: #888;
+            }
+
+            .delete-btn {
+                background: #dc3545;
+                color: white;
+                border: none;
+                padding: 5px 10px;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+            }
+
+            .delete-btn:hover {
+                background: #c82333;
+            }
+
+            .priority {
+                margin-left: 10px;
+                padding: 5px;
+                border-radius: 3px;
+                font-size: 12px;
+            }
+
+            .high-priority {
+                background-color: #ff5252;
+                color: white;
+                animation: blink 1s step-start infinite;
+            }
+
+            .medium-priority {
+                background-color: #ffb74d;
+                color: white;
+            }
+
+            .low-priority {
+                background-color: #81c784;
+                color: white;
+            }
+
+            .footer {
+                position: absolute;
+                bottom: 10px;
+                right: 10px;
+                font-size: 12px;
+                color: #777;
+            }
+
+            @keyframes blink {
+                50% {
+                    opacity: 0;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>To-Do List</h1>
+            <form id="task-form">
+                <input
+                    type="text"
+                    id="task-input"
+                    placeholder="Add a new task"
+                />
+                <select id="priority-select">
+                    <option value="low">Low Priority</option>
+                    <option value="medium">Medium Priority</option>
+                    <option value="high">High Priority</option>
+                </select>
+                <input type="date" id="due-date" />
+                <button type="submit">Add Task</button>
+            </form>
+            <ul id="task-list"></ul>
+            <div class="footer">Made for Nezuware</div>
+        </div>
+        <script>
+            document
+                .getElementById("task-form")
+                .addEventListener("submit", function (e) {
+                    e.preventDefault();
+
+                    const taskInput = document.getElementById("task-input");
+                    const prioritySelect =
+                        document.getElementById("priority-select");
+                    const dueDateInput = document.getElementById("due-date");
+                    const taskText = taskInput.value.trim();
+                    const priority = prioritySelect.value;
+                    const dueDate = dueDateInput.value;
+
+                    if (taskText === "") {
+                        alert("Please enter a task");
+                        return;
+                    }
+
+                    const taskList = document.getElementById("task-list");
+                    const li = document.createElement("li");
+                    li.className = "task-item";
+
+                    const taskSpan = document.createElement("span");
+                    taskSpan.appendChild(
+                        document.createTextNode(`${taskText} `),
+                    );
+
+                    const prioritySpan = document.createElement("span");
+                    prioritySpan.className = `priority ${priority}-priority`;
+                    prioritySpan.appendChild(
+                        document.createTextNode(
+                            priority.charAt(0).toUpperCase() +
+                                priority.slice(1),
+                        ),
+                    );
+
+                    const dueDateSpan = document.createElement("span");
+                    dueDateSpan.className = "due-date";
+                    dueDateSpan.appendChild(
+                        document.createTextNode(` Due: ${dueDate}`),
+                    );
+
+                    const deleteBtn = document.createElement("button");
+                    deleteBtn.className = "delete-btn";
+                    deleteBtn.appendChild(document.createTextNode("Delete"));
+
+                    li.appendChild(taskSpan);
+                    li.appendChild(prioritySpan);
+                    li.appendChild(dueDateSpan);
+                    li.appendChild(deleteBtn);
+                    taskList.appendChild(li);
+
+                    taskInput.value = "";
+                    prioritySelect.value = "low";
+                    dueDateInput.value = "";
+
+                    deleteBtn.addEventListener("click", function () {
+                        taskList.removeChild(li);
+                    });
+
+                    taskSpan.addEventListener("click", function () {
+                        li.classList.toggle("completed");
+                    });
+                });
+        </script>
+    </body>
+</html>
